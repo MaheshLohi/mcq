@@ -35,7 +35,7 @@
 
                 <div class="border-t border-gray-200 py-6 px-4 space-y-6">
                     <div class="flow-root">
-                        <a href="{{ route('login') }}" class="-m-2 p-2 block font-medium text-gray-900">{{ __('Login') }}</a>
+                        <a href="{{ route('login') }}" class="-m-2 p-2 block font-medium text-gray-900">{{ __('Logn') }}</a>
                     </div>
                 </div>
             </div>

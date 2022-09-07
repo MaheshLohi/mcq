@@ -25,6 +25,7 @@
         "laravel/sanctum": "2.11.0",
         "laravel/tinker": "2.6.1",
         "maatwebsite/excel": "3.1.30",
+        "nesbot/carbon": "^2.57",
         "rachidlaasri/laravel-installer": "4.1.0",
         "razorpay/razorpay": "2.8.1",
         "spatie/laravel-fractal": "5.8.1",

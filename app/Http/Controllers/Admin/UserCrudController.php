@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Illuminate\Support\Arr;
 
 class UserCrudController extends Controller
 {
@@ -38,16 +39,28 @@ class UserCrudController extends Controller
     {
         return Inertia::render('Admin/Users', [
             'roles' => [
-                ['value' => 1, 'text' => 'Admin'],
+//                ['value' => 1, 'text' => 'Admin'],
                 ['value' => 2, 'text' => 'Instructor'],
                 ['value' => 3, 'text' => 'Student'],
                 ['value' => 5, 'text' => 'Guest'],
             ],
-            'users' => function () use($filters) {
+ /*           'users' => function () use($filters) {
                 return fractal(User::with('roles:id,name')->filter($filters)
                 ->paginate(request()->perPage != null ? request()->perPage : 10),
 		               new UserTransformer())->toArray();
-		          },
+ },*/
+	     'users' => function () use($filters) {
+                $userList = fractal(User::with('roles:id,name')->filter($filters)
+                    ->paginate(request()->perPage != null ? request()->perPage : 10),
+		               new UserTransformer())->toArray();
+                
+                $userList['data'] = Arr::where($userList['data'], function ($value, $key) {
+                    if ($value['role'] != "admin") {
+                        return ($value);
+                    }
+                });
+                return $userList;
+		    },
             'userGroups' => UserGroup::select(['id', 'name'])->active()->get()
         ]);
     }

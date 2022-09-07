@@ -53,7 +53,9 @@ class User extends Authenticatable implements Wallet, MustVerifyEmail
         'email',
         'password',
         'is_active',
-        'preferences'
+	'preferences',
+	'email_verified_at',
+	'mobile_verified_at'
     ];
 
     protected $hidden = [

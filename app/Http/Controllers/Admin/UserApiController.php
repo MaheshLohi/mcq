@@ -1,0 +1,139 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Admin\UserCrudController;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Models\User;
+use App\Models\UserGroup;
+use App\Transformers\Admin\UserSearchTransformer;
+use App\Transformers\Admin\UserTransformer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Category;
+use App\Models\Section;
+use App\Models\SubCategory;
+use App\Models\Skill;
+use Carbon\Carbon;
+
+class UserApiController 
+{
+    protected $userController;
+
+    public function __construct(UserCrudController $userController)
+    {
+        $this->userController = $userController;
+    }
+    public function addUser(Request $request)
+    {
+	    $requestData = $request->all();
+	    foreach ($requestData as $request) {
+	$user = User::create([
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name'],
+            'user_name' => $request['user_name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+	    'is_active' => $request['is_active'],
+	    'email_verified_at' => '2022-04-20 19:10:49' ,
+	    'mobile_verified_at' => '2022-04-20 19:10:49'
+]);
+        if($user) {
+            $user->assignRole($request['role']);
+            $user->userGroups()->sync($request->user_groups);
+	}
+    }
+        return ["message"=>"Success"];
+    }
+
+    //  Department
+    public function storeCategory(Request $request)
+    {
+        $data = $request->all();
+      // category
+		// "name" : "Mech",
+		// "short_description" : "new",
+		// "description" : "just",
+		// "image_path" :"",
+		// "is_active" : 1
+        foreach ($data as $key => $value) {
+\Log::info(json_encode($value));            
+            $category = [
+                'name' => $value['dept'],
+                'short_description' => 'My '. $value['dept'],
+                'description' => '',
+                'is_active' => 1,
+                'image_path' => ''
+            ];
+
+            $cat = Category::updateOrCreate($category);
+
+            $subCat = [
+                "name"=> $value['sem'],
+                "category_id" =>  $cat['id'],
+                "is_active" => 1,
+                "sub_category_type_id" => 2
+            ];
+            $this->storeSubCat($subCat);
+
+            $section = [
+                "name" => $value['subject'],
+                "short_description" =>  '',
+                "icon_path" => "",
+                "is_active" =>  1
+            ];
+            $this->storeSections($section);
+        }
+        
+        return ["message"=>"Success"];
+    } 
+
+
+    // Semester
+    public function storeSubCat($data)
+    {
+        return SubCategory::updateOrCreate($data);
+        
+        // return ["message"=>"Success"];
+    }
+//  "Categories": "Department",
+
+//     "Sub Category": "Semester",
+//     "Section": "Subject",
+//     "Skill": "Chapter",
+
+    // Subject
+    public function storeSections($data)
+    {
+        Section::updateOrCreate($data);
+     
+        return ["message"=>"Success"];
+    } 
+
+
+    // Sem
+    // public function storeSem(Request $request)
+    // {
+    //     Section::updateOrCreate($request->all());
+     
+    //     return ["message"=>"Success"];
+    // } 
+
+     // Chapter
+     public function storeSkills(Request $request)
+     {
+	$data = $request->all();
+        $sectionId = \DB::table('sections')->where('name', $data['subject'])->first()->id;
+        
+        $info = [
+            'name' => $request['name'],
+            'is_active' => true,
+            'section_id' => $sectionId
+        ];
+    
+        Skill::updateOrCreate($info);
+        
+         return ["message"=>"Success"];
+     } 
+}

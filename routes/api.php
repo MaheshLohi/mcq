@@ -19,7 +19,16 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('user/add', 'App\Http\Controllers\Admin\UserApiController@addUser');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Department
+Route::post('department/add', 'App\Http\Controllers\Admin\UserApiController@storeCategory');
+
+// Semesters
+Route::post('semester/add', 'App\Http\Controllers\Admin\UserApiController@storeSubCat');
+
+// Subjects
+Route::post('subject/add', 'App\Http\Controllers\Admin\UserApiController@storeSections');
+
+// Chapters
+Route::post('chapter/add', 'App\Http\Controllers\Admin\UserApiController@storeSkills');

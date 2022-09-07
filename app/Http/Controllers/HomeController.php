@@ -18,7 +18,7 @@ class HomeController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function index()
-    {
+    { 
         if (Auth::user()->hasRole('admin')) {
             return redirect()->route('admin_dashboard');
         } elseif (Auth::user()->hasRole(['guest', 'student', 'employee'])) {
